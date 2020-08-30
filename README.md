@@ -1,4 +1,6 @@
 # Queue Rules
+![Queue Rules Build](https://github.com/benmckibben/queue-rules/workflows/Queue%20Rules%20Build/badge.svg)
+![Queue Rules Publish](https://github.com/benmckibben/queue-rules/workflows/Queue%20Rules%20Publish/badge.svg)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 ## Overview
