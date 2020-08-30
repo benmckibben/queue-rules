@@ -1,0 +1,70 @@
+{% extends "frontend/base.html" %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block header %}
+<a class="nav-link" href="#" data-toggle="modal" data-target="#accountModal">Account</a>
+{% endblock %}
+
+{% block body %}
+<main role="main" class="inner cover" style="padding: 50px; max-height: 90%;">
+    <h1 class="cover-heading">My Rules</h1>
+    <div class="card bg-dark border-light scroll" style="width: 100%;">
+        <ul class="list-group list-group-flush" id="myRuleList">
+            <li class="list-group-item new-rule-item"><a href="#" data-toggle="modal" data-target="#ruleModal" onclick="populateRuleModalBody(null)">Create new rule</a></li>
+        </ul>
+    </div>
+
+    <div class="modal fade" id="ruleModal" tabindex="-1" role="dialog" aria-labelledby="ruleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ruleModalLabel">New Rule</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="ruleModalBody">
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="saveRuleButton" type="button" class="btn btn-success" onclick="submitForm()">Save</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="accountModal" tabindex="-1" role="dialog" aria-labelledby="accountModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="accountModalLabel">My Account</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="accountModalBody">
+                    Member since <strong>{{ date_joined|date:"F j, Y" }}</strong>.
+                    <br><br>
+                    <button id="logoutButton" type="button" class="btn btn-warning" onclick="logout()">Logout</button>
+                    <br><br>
+                    <label for="deleteAccountButton">
+                        You can delete your account by clicking the button below. While you can log back in with your Spotify account, 
+                        <strong>this will permanently delete all of your rules.</strong>
+                    </label>
+                    <button id="deleteAccountButton" type="button" class="btn btn-danger" onclick="deleteAccount()">Delete account</button>
+                    <br><br>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "frontend/home.js" %}"></script>
+{% endblock %}
