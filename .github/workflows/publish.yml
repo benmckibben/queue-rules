@@ -1,0 +1,73 @@
+name: Queue Rules Publish
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - v*
+
+jobs:
+  push_web:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build image
+        run: docker build . --file web.Dockerfile --tag benmckibben/queue_rules_web
+
+      - name: Login
+        run: echo "${{ secrets.DOCKER_ACCESS_TOKEN }}" | docker login -u benmckibben --password-stdin
+
+      - name: Push image
+        run: |
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "master" ] && VERSION=latest
+          
+          IMAGE_ID=benmckibben/queue_rules_web
+
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+
+          docker tag benmckibben/queue_rules_web $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
+  
+  push_queuerd:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build image
+        run: docker build . --file queuerd.Dockerfile --tag benmckibben/queue_rules_queuerd
+
+      - name: Login
+        run: echo "${{ secrets.DOCKER_ACCESS_TOKEN }}" | docker login -u benmckibben --password-stdin
+
+      - name: Push image
+        run: |
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+          # Use Docker `latest` tag convention
+          [ "$VERSION" == "master" ] && VERSION=latest
+          
+          IMAGE_ID=benmckibben/queue_rules_queuerd
+
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+
+          docker tag benmckibben/queue_rules_queuerd $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
