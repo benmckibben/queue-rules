@@ -1,0 +1,17 @@
+{% extends "frontend/base.html" %}
+{% load static %}
+
+{% block title %}Login{% endblock %}
+
+{% block body %}
+<main role="main" class="inner cover">
+    <h1 class="cover-heading">Queue Rules</h1>
+    <p class="lead">Queue Rules lets you define tracks to always be queued up after another track plays.</p>
+    <p class="lead">
+        <a href="{% url "social:begin" "spotify" %}" class="btn btn-lg btn-secondary">
+            <img src="{% static "frontend/spotify.png" %}" style="height: 30px; width: 30px;"> Login with Spotify
+        </a>
+    </p>
+    <p>This app will access your listening activity, but it will not store anything unrelated to the app. See the <a href="#" data-toggle="modal" data-target="#aboutModal"><u>About</u></a> section for more info.</p>
+</main>
+{% endblock %}
