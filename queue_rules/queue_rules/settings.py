@@ -121,6 +121,9 @@ SOCIAL_AUTH_SPOTIFY_KEY = config("SPOTIFY_CLIENT_ID")
 SOCIAL_AUTH_SPOTIFY_SECRET = config("SPOTIFY_SECRET")
 SOCIAL_AUTH_SPOTIFY_SCOPE = ["user-modify-playback-state", "user-read-playback-state"]
 SPOTIFY_REDIRECT_URI = config("SPOTIFY_REDIRECT_URI")
+SOCIAL_AUTH_REDIRECT_IS_HTTPS = config(
+    "SOCIAL_AUTH_REDIRECT_IS_HTTPS", default=False, cast=bool
+)
 
 SERVICE_STATUS_OK_THRESHOLD = config(
     "SERVICE_STATUS_OK_THRESHOLD", default=15, cast=int
