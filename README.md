@@ -53,6 +53,8 @@ A special note on `SPOTIFY_REDIRECT_URI`: at the time of writing, the appropriat
 ### Database
 Run `make migrate` to run database migrations for the app and its dependencies. If you didn't specify a `DATABASE_URL`, a SQLite database will be created next to `manage.py`.
 
+By design, required Python or system libraries for various database engines are not included in dependencies. For example, if you wish to use a Postgres database, you'll need to handle installing `psycopg2` yourself. [Here](https://docs.djangoproject.com/en/3.1/topics/install/#database-installation) is a good reference for this from Django's documentation.
+
 ### Start things up and get coding
 Run the development server with `make dev-web`. This command will start up the web server listening on `localhost`/`127.0.0.1` at port `8000`.
 
