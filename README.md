@@ -86,7 +86,7 @@ make queuerd-image args="--tag queue_rules_queuerd:dev"
 
 ### Other Makefile commands
 1. `make build`: Install Pipenv, dependencies (excluding those used solely for testing / linting), and run Django's `collectstatic` management command. The last step will create a new directory, `static` next to `manage.py` that contains all of the static files the app needs.
-1. `make web`: Run the web app using Uvicorn instead of the Django development server.
+1. `make web`: Run the web app using Uvicorn instead of the Django development server. You can also provide args to Uvicorn, for example `make web args="--host 0.0.0.0 --port 9000"`.
 
 ## Questions?
 Feel free to ask questions by raising issues here, or email me at [dev@trash.house](mailto:dev@trash.house).

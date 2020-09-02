@@ -16,7 +16,7 @@ migrate:
 	@cd queue_rules && pipenv run python manage.py migrate
 
 web:
-	@cd queue_rules && pipenv run uvicorn queue_rules.asgi:application
+	@cd queue_rules && pipenv run uvicorn queue_rules.asgi:application $(args)
 
 dev-web:
 	@cd queue_rules && pipenv run python manage.py runserver
