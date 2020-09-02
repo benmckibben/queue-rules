@@ -138,7 +138,6 @@ if not DEBUG:  # pragma: no cover
     sentry_sdk.init(
         dsn=config("SENTRY_DSN"),
         integrations=[DjangoIntegration()],
-        traces_sample_rate=1.0,
         send_default_pii=True,
         environment=config("ENVIRONMENT"),
     )

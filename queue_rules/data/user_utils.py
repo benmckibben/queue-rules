@@ -1,9 +1,14 @@
+import logging
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from social_django.models import UserSocialAuth
 from spotipy import Spotify
 from spotipy.exceptions import SpotifyException
 from spotipy.oauth2 import SpotifyOAuth
+
+
+spotipy_logger = logging.getLogger("spotipy.client")
 
 
 def _get_spotify_social_auth(user: User) -> UserSocialAuth:
@@ -26,6 +31,10 @@ def get_spotify_client(user: User, check_access: bool = True) -> Spotify:
     client = Spotify(auth=_get_spotify_access_token(user))
 
     if check_access:
+        # Squelch logging for Spotipy, as it causes some noise for
+        # caught exceptions.
+        spotipy_logger.setLevel(logging.CRITICAL)
+
         try:
             client.currently_playing()
         except SpotifyException:
@@ -34,6 +43,9 @@ def get_spotify_client(user: User, check_access: bool = True) -> Spotify:
 
             # If an exception gets raised here, then the refresh failed.
             client.currently_playing()
+        finally:
+            # Reenable Spotipy logging.
+            spotipy_logger.setLevel(logging.NOTSET)
 
     return client
 
