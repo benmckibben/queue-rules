@@ -72,7 +72,7 @@ At the time of writing, Queue Rules has 100% statement and branch test coverage 
 You can run the tests and generate a coverage report simultaneously by running `make test` (the coverage report will only run if the tests pass). You can then generate an HTML coverage report and serve it by running `make coverage-html` then navigating to [http://localhost:9001/](http://localhost:9001/).
 
 ### Docker
-At the time of writing, Docker is not typically used for development and is really only used for containerizing the app and daemon for production deployment. If you'd like to build the images, however, there are two `make` targets for that.
+At the time of writing, Docker is not typically used for development and is really only used for containerizing the app and daemon for production deployment. However, the GitHub workflow will fail if the images fail to build, so test building using the following commands.
 
 For the web app:
 ```
