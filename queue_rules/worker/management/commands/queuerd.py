@@ -70,6 +70,12 @@ def should_apply_rule(rule: Rule, playback_info: dict) -> bool:
     if not playback_info["is_playing"]:
         return False
 
+    # Don't apply the rule if it's disabled.
+    # This should be a redundant check due to the query in get_matching_rule(),
+    # but worth checking anyway here.
+    if not rule.is_active:
+        return False
+
     # Since we can't inspect the queue with Spotify's API, do some finnicky guesswork.
 
     # Firstly, has it been at least one song length since this rule was last applied?

@@ -136,6 +136,15 @@ class TestGetMatchingRule(TestCase):
     def test_no_rule_matched(self):
         self.assertIsNone(queuerd.get_matching_rule(self.test_user, "bar"))
 
+    def test_inactive_rule(self):
+        self.test_rule.is_active = False
+        self.test_rule.save()
+
+        self.assertIsNone(
+            queuerd.get_matching_rule(self.test_user, "foo"),
+            self.test_rule,
+        )
+
 
 class TestShouldApplyRule(TestCase):
     def setUp(self):
@@ -149,6 +158,17 @@ class TestShouldApplyRule(TestCase):
             queuerd.should_apply_rule(
                 self.test_rule,
                 {"is_playing": False},
+            )
+        )
+
+    def test_inactive(self):
+        self.test_rule.is_active = False
+        self.test_rule.save()
+
+        self.assertFalse(
+            queuerd.should_apply_rule(
+                self.test_rule,
+                {"is_playing": True},
             )
         )
 
