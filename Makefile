@@ -4,7 +4,7 @@ list:
 
 build:
 	@pip install pipenv && \
-	pipenv install && \
+	pipenv sync && \
 	cd queue_rules && \
 	pipenv run python manage.py collectstatic
 
