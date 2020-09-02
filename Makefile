@@ -15,10 +15,10 @@ dev-build:
 migrate:
 	@cd queue_rules && pipenv run python manage.py migrate
 
-app:
+web:
 	@cd queue_rules && pipenv run uvicorn queue_rules.asgi:application
 
-dev-app:
+dev-web:
 	@cd queue_rules && pipenv run python manage.py runserver
 
 queuerd:
