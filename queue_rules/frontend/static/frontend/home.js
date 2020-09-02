@@ -63,7 +63,7 @@ function populateRuleModalBody(ruleId) {
                     </div>
                 </div>
                 <small id="sequenceHelp" class="form-text">
-                    Again, paste Spotify URIs here. Click the tracks once added to remove them.
+                    Paste a Spotify URI here, then press Enter or click the plus sign to add it to the list. Click the tracks once added to remove them.
                 </small>
                 <br>
                 <div class="list-group" id="modalSequenceList"></div>
