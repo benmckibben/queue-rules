@@ -1,4 +1,4 @@
-FROM python:3.8-slim AS base
+FROM python:3.8-slim AS builder
 
 WORKDIR /app
 ADD . /app
@@ -10,12 +10,12 @@ ENV PIPENV_VENV_IN_PROJECT=1
 RUN make build
 
 # Web app
-FROM base AS web
+FROM builder AS web
 
 EXPOSE 8000
 CMD [ "make", "app" ]
 
 # queuerd
-FROM base AS queuerd
+FROM builder AS queuerd
 
 CMD [ "make", "queuerd" ]
