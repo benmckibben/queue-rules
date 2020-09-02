@@ -1,4 +1,4 @@
-FROM python:3.8-slim
+FROM python:3.8-slim AS builder
 
 WORKDIR /app
 ADD . /app
@@ -8,6 +8,14 @@ RUN apt-get install make
 
 ENV PIPENV_VENV_IN_PROJECT=1
 RUN make build
+
+# queuerd
+FROM builder AS queuerd
+
+CMD [ "make", "queuerd" ]
+
+# Web app
+FROM builder AS web
 
 EXPOSE 8000
 CMD [ "make", "app" ]

@@ -38,3 +38,9 @@ format:
 
 lint:
 	@cd queue_rules && pipenv run black --check . && pipenv run flake8 .
+
+web-image:
+	@docker build . --target web $(args)
+
+queuerd-image:
+	@docker build . --target queuerd $(args)

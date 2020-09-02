@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Build image
-        run: docker build . --file web.Dockerfile --tag benmckibben/queue_rules_web
+        run: make web-image args="--tag benmckibben/queue_rules_web"
 
       - name: Login
         run: echo "${{ secrets.DOCKER_ACCESS_TOKEN }}" | docker login -u benmckibben --password-stdin
@@ -48,7 +48,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Build image
-        run: docker build . --file queuerd.Dockerfile --tag benmckibben/queue_rules_queuerd
+        run: make queuerd-image args="--tag benmckibben/queue_rules_queuerd"
 
       - name: Login
         run: echo "${{ secrets.DOCKER_ACCESS_TOKEN }}" | docker login -u benmckibben --password-stdin

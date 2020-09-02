@@ -72,16 +72,16 @@ At the time of writing, Queue Rules has 100% statement and branch test coverage 
 You can run the tests and generate a coverage report simultaneously by running `make test` (the coverage report will only run if the tests pass). You can then generate an HTML coverage report and serve it by running `make coverage-html` then navigating to [http://localhost:9001/](http://localhost:9001/).
 
 ### Docker
-At the time of writing, Docker is not typically used for development and is really only used for containerizing the app and daemon for production deployment. If you'd like to build the images, however, here's some examples.
+At the time of writing, Docker is not typically used for development and is really only used for containerizing the app and daemon for production deployment. If you'd like to build the images, however, there are two `make` targets for that.
 
-For the web app, something like:
+For the web app:
 ```
-docker build -f web.Dockerfile -t queue_rules_web:dev .
+make web-image args="--tag queue_rules_web:dev"
 ```
 
-For `queuerd`, something like:
+For `queuerd`:
 ```
-docker build -f queuerd.Dockerfile -t queue_rules_queuerd:dev .
+make queuerd-image args="--tag queue_rules_queuerd:dev"
 ```
 
 ### Other Makefile commands
