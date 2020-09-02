@@ -107,6 +107,10 @@ def run_for_user(user: User, client: Spotify) -> None:
     if currently_playing is None:
         return
 
+    # Sometimes item can be None.
+    if currently_playing["item"] is None:
+        return
+
     # See if there's a rule for the track.
     currently_playing_track_id = currently_playing["item"]["id"]
     rule = get_matching_rule(user, currently_playing_track_id)

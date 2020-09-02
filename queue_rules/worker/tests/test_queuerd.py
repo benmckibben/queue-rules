@@ -235,6 +235,14 @@ class TestRunForUser(TestCase):
 
         self.test_rule.apply.assert_not_called()
 
+    def test_none_item(self):
+        mock_client = mock.MagicMock()
+        mock_client.currently_playing.return_value = {"item": None}
+
+        queuerd.run_for_user(self.test_user, mock_client)
+
+        self.test_rule.apply.assert_not_called()
+
     @mock.patch("worker.management.commands.queuerd.get_matching_rule")
     def test_no_matching_rule(self, mock_get_matching):
         mock_client = mock.MagicMock()
