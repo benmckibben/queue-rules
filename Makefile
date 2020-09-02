@@ -4,7 +4,7 @@ list:
 
 build:
 	@pip install pipenv && \
-	pipenv install && \
+	pipenv sync && \
 	cd queue_rules && \
 	pipenv run python manage.py collectstatic
 
@@ -15,10 +15,10 @@ dev-build:
 migrate:
 	@cd queue_rules && pipenv run python manage.py migrate
 
-app:
-	@cd queue_rules && pipenv run uvicorn queue_rules.asgi:application
+web:
+	@cd queue_rules && pipenv run uvicorn queue_rules.asgi:application $(args)
 
-dev-app:
+dev-web:
 	@cd queue_rules && pipenv run python manage.py runserver
 
 queuerd:

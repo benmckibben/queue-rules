@@ -18,4 +18,4 @@ CMD [ "make", "queuerd" ]
 FROM builder AS web
 
 EXPOSE 8000
-CMD [ "make", "app" ]
+CMD [ "make", "web" ]

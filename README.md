@@ -53,8 +53,10 @@ A special note on `SPOTIFY_REDIRECT_URI`: at the time of writing, the appropriat
 ### Database
 Run `make migrate` to run database migrations for the app and its dependencies. If you didn't specify a `DATABASE_URL`, a SQLite database will be created next to `manage.py`.
 
+By design, required Python or system libraries for various database engines are not included in dependencies. For example, if you wish to use a Postgres database, you'll need to handle installing `psycopg2` yourself. [Here](https://docs.djangoproject.com/en/3.1/topics/install/#database-installation) is a good reference for this from Django's documentation.
+
 ### Start things up and get coding
-Run the development server with `make dev-app`. This command will start up the app server listening on `localhost`/`127.0.0.1` at port `8000`.
+Run the development server with `make dev-web`. This command will start up the web server listening on `localhost`/`127.0.0.1` at port `8000`.
 
 You can run a development `queuerd` (the daemon that looks at users' listening activity and applies rules) by running `make queuerd`.
 
@@ -72,7 +74,7 @@ At the time of writing, Queue Rules has 100% statement and branch test coverage 
 You can run the tests and generate a coverage report simultaneously by running `make test` (the coverage report will only run if the tests pass). You can then generate an HTML coverage report and serve it by running `make coverage-html` then navigating to [http://localhost:9001/](http://localhost:9001/).
 
 ### Docker
-At the time of writing, Docker is not typically used for development and is really only used for containerizing the app and daemon for production deployment. If you'd like to build the images, however, there are two `make` targets for that.
+At the time of writing, Docker is not typically used for development and is really only used for containerizing the app and daemon for production deployment. However, the GitHub workflow will fail if the images fail to build, so test building using the following commands.
 
 For the web app:
 ```
@@ -86,7 +88,7 @@ make queuerd-image args="--tag queue_rules_queuerd:dev"
 
 ### Other Makefile commands
 1. `make build`: Install Pipenv, dependencies (excluding those used solely for testing / linting), and run Django's `collectstatic` management command. The last step will create a new directory, `static` next to `manage.py` that contains all of the static files the app needs.
-1. `make app`: Run the web app using Uvicorn instead of the Django development server.
+1. `make web`: Run the web app using Uvicorn instead of the Django development server. You can also provide args to Uvicorn, for example `make web args="--host 0.0.0.0 --port 9000"`.
 
 ## Questions?
 Feel free to ask questions by raising issues here, or email me at [dev@trash.house](mailto:dev@trash.house).
