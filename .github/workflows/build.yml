@@ -19,3 +19,7 @@ jobs:
       run: make test
     - name: Lint
       run: make lint
+    - name: Build web image
+      run: docker build . --file web.Dockerfile
+    - name: Build queuerd image
+      run: docker build . --file queuerd.Dockerfile
