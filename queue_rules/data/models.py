@@ -112,3 +112,4 @@ class LastCheckLog(models.Model):
 
 class UserLock(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="lock")
+    created = models.DateTimeField(auto_now_add=True)
