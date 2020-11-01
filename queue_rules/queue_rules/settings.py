@@ -125,9 +125,10 @@ SOCIAL_AUTH_REDIRECT_IS_HTTPS = config(
     "SOCIAL_AUTH_REDIRECT_IS_HTTPS", default=False, cast=bool
 )
 
-SERVICE_STATUS_OK_THRESHOLD = config(
-    "SERVICE_STATUS_OK_THRESHOLD", default=15, cast=int
+MOST_RECENT_CHECK_AGE_THRESHOLD = config(
+    "MOST_RECENT_CHECK_AGE_THRESHOLD", default=15, cast=int
 )
+STALE_LOCK_THRESHOLD = config("STALE_LOCK_THRESHOLD", default=15, cast=int)
 
 # Queuerd config
 QUEUERD_SLEEP_TIME = config("QUEUERD_SLEEP_TIME", default=1, cast=float)

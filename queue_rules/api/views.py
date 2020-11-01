@@ -1,7 +1,4 @@
-from datetime import datetime, timedelta, timezone
-
 from django.db import IntegrityError
-from django.conf import settings
 from django.contrib.auth import logout
 from rest_framework.exceptions import ValidationError
 from rest_framework import generics
@@ -10,10 +7,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from data.exceptions import BadSpotifyTrackID
-from data.models import LastCheckLog, Rule
+from data.models import Rule
 
 from .permissions import IsOwner
 from .serializers import RuleSerializer
+from .service_checks import run_checks
+from .service_checks import ServiceStatus as StatusEnum
 
 
 class RuleList(generics.ListAPIView):
@@ -53,15 +52,16 @@ class ServiceStatus(APIView):
     # Intentionally don't have any permissions - this should be publicly available.
 
     def get(self, request, format=None):
-        most_recent_check = LastCheckLog.get_most_recent_check()
-        now = datetime.now(timezone.utc)
+        service_status, check_info = run_checks()
 
-        if most_recent_check is not None and now - most_recent_check <= timedelta(
-            seconds=settings.SERVICE_STATUS_OK_THRESHOLD
-        ):
-            return Response({"status": "OK"})
-        else:
-            return Response({"status": "DOWN"}, 503)
+        if service_status == StatusEnum.OK:
+            return Response({"status": "OK", "info": check_info}, 200)
+        elif service_status == StatusEnum.WARNING:
+            return Response({"status": "WARNING", "info": check_info}, 200)
+        elif service_status == StatusEnum.CRITICAL:
+            return Response({"status": "CRITICAL", "info": check_info}, 503)
+
+        raise ValueError(f"Invalid service status: {service_status}")
 
 
 class Logout(APIView):
