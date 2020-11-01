@@ -7,7 +7,7 @@
 Queue Rules is an app that lets you define tracks to be queued up after other tracks play. This is accomplished by exposing an **API** allowing users to configure rules and running a **daemon** that watches what users listen to and applies the rules where appropriate. Additionally, the app provides a **Spotify login** flow that handles obtaining tokens for the API and daemon to use to communicate with Spotify.
 
 ### Architecture / Dependencies
-The core application, database management, and daemon all use [Django](https://www.djangoproject.com/) on Python 3.8. The API is then developed and exposed using [Django Rest Framework](https://www.django-rest-framework.org/). The login flow is handled by [Python Social Auth's Django integration](https://python-social-auth.readthedocs.io/en/latest/configuration/django.html), which in turn links into [`django.contrib.auth`](https://docs.djangoproject.com/en/3.1/ref/contrib/auth/) for handling the core user data.
+The core application, database management, and daemon all use [Django](https://www.djangoproject.com/) on Python 3.9. The API is then developed and exposed using [Django Rest Framework](https://www.django-rest-framework.org/). The login flow is handled by [Python Social Auth's Django integration](https://python-social-auth.readthedocs.io/en/latest/configuration/django.html), which in turn links into [`django.contrib.auth`](https://docs.djangoproject.com/en/3.1/ref/contrib/auth/) for handling the core user data.
 
 Other notable dependencies in play:
 * [Pipenv](https://docs.pipenv.org/) for Python dependency management.
@@ -36,7 +36,7 @@ Outside of these, I'm very open to other ideas!
 If you'd like to run this app yourself and potentially alter code for it, follow the steps below. A Makefile is provided to abstract a few of these steps, so feel free to inspect it if you'd like further details of what it's doing under the hood.
 
 ### Initial build
-Before running anything, ensure that you have Python 3.8 somewhere on your system. It can be either your system Python, or perhaps a runtime managed by [`pyenv`](https://github.com/pyenv/pyenv).
+Before running anything, ensure that you have Python 3.9 somewhere on your system. It can be either your system Python, or perhaps a runtime managed by [`pyenv`](https://github.com/pyenv/pyenv).
 
 The command below will attempt to install [Pipenv](https://docs.pipenv.org/) into your system Python install. If you don't want that, alter the Makefile beforehand.
 
