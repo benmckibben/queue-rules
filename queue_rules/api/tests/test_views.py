@@ -1,16 +1,15 @@
 import logging
-from datetime import datetime, timedelta, timezone
 from unittest import mock
 
-from django.conf import settings
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework.test import APIClient
 
+from api.service_checks import ServiceStatus
 from data.exceptions import BadSpotifyTrackID
-from data.models import LastCheckLog, Rule, SongSequenceMember
+from data.models import Rule, SongSequenceMember
 
 
 class TestRuleList(TestCase):
@@ -344,55 +343,79 @@ class TestCreateRule(TestCase):
         self.assertEqual(Rule.objects.count(), 0)
 
 
-class TestServiceStatus(TestCase):
+class TestServiceStatus(SimpleTestCase):
     def setUp(self):
         # Squelch logging for these tests.
         logging.disable(logging.CRITICAL)
-
-        self.test_user_1 = User.objects.create(username="test1")
 
     def tearDown(self):
         # Reenable logging when tests finish.
         logging.disable(logging.NOTSET)
 
-    @freeze_time("2020-08-15")
-    def test_ok(self):
-        LastCheckLog.objects.create(
-            user=self.test_user_1,
-            last_checked=datetime(2020, 8, 15, tzinfo=timezone.utc)
-            - timedelta(seconds=settings.SERVICE_STATUS_OK_THRESHOLD),
+    @mock.patch("api.views.run_checks")
+    def test_ok(self, mock_run_checks):
+        mock_run_checks.return_value = (
+            ServiceStatus.OK,
+            {"checks": "pass"},
         )
 
         client = APIClient()
         response = client.get(reverse("service-status"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, {"status": "OK"})
+        self.assertEqual(
+            response.data,
+            {
+                "status": "OK",
+                "info": {"checks": "pass"},
+            },
+        )
 
-    @freeze_time("2020-08-15")
-    def test_down(self):
-        LastCheckLog.objects.create(
-            user=self.test_user_1,
-            last_checked=datetime(2020, 8, 15, tzinfo=timezone.utc)
-            - timedelta(seconds=settings.SERVICE_STATUS_OK_THRESHOLD)
-            - timedelta(milliseconds=1),
+    @mock.patch("api.views.run_checks")
+    def test_warning(self, mock_run_checks):
+        mock_run_checks.return_value = (
+            ServiceStatus.WARNING,
+            {"checks": "warning"},
+        )
+
+        client = APIClient()
+        response = client.get(reverse("service-status"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.data,
+            {
+                "status": "WARNING",
+                "info": {"checks": "warning"},
+            },
+        )
+
+    @mock.patch("api.views.run_checks")
+    def test_critical(self, mock_run_checks):
+        mock_run_checks.return_value = (
+            ServiceStatus.CRITICAL,
+            {"checks": "critical"},
         )
 
         client = APIClient()
         response = client.get(reverse("service-status"))
 
         self.assertEqual(response.status_code, 503)
-        self.assertEqual(response.data, {"status": "DOWN"})
+        self.assertEqual(
+            response.data,
+            {
+                "status": "CRITICAL",
+                "info": {"checks": "critical"},
+            },
+        )
 
-    def test_no_check_logs(self):
-        self.assertEqual(LastCheckLog.objects.count(), 0)
+    @mock.patch("api.views.run_checks")
+    def test_bad_status(self, mock_run_checks):
+        mock_run_checks.return_value = ("???", {})
 
-        # If we don't have any LastCheckLogs, the service should be considered down.
         client = APIClient()
-        response = client.get(reverse("service-status"))
-
-        self.assertEqual(response.status_code, 503)
-        self.assertEqual(response.data, {"status": "DOWN"})
+        with self.assertRaises(ValueError):
+            client.get(reverse("service-status"))
 
 
 class TestLogout(TestCase):
