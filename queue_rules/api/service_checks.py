@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from enum import Enum
+from typing import Tuple
 
 from django.conf import settings
 
@@ -10,7 +11,7 @@ from data.models import LastCheckLog
 # any additional information on the check.
 
 
-def most_recent_check() -> tuple[bool, dict]:
+def most_recent_check() -> Tuple[bool, dict]:
     check = LastCheckLog.get_most_recent_check()
     now = datetime.now(timezone.utc)
 
@@ -35,7 +36,7 @@ CRITICAL_CHECKS = (most_recent_check,)
 WARNING_CHECKS = ()
 
 
-def run_checks() -> tuple[ServiceStatus, dict]:
+def run_checks() -> Tuple[ServiceStatus, dict]:
     """
     Run the checks and return a ServiceStatus indicating the overall service status
     and a dict with any info from the checks.
