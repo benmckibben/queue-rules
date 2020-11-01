@@ -17,7 +17,9 @@ def most_recent_check() -> Tuple[bool, dict]:
 
     if check is not None:
         check_age = now - check
-        result = check_age <= timedelta(seconds=settings.SERVICE_STATUS_OK_THRESHOLD)
+        result = check_age <= timedelta(
+            seconds=settings.MOST_RECENT_CHECK_AGE_THRESHOLD
+        )
 
         return result, {"most_recent_check_age": check_age}
     else:

@@ -18,7 +18,7 @@ class TestMostRecentCheck(TestCase):
         LastCheckLog.objects.create(
             user=self.test_user,
             last_checked=datetime(2020, 8, 15, tzinfo=timezone.utc)
-            - timedelta(seconds=settings.SERVICE_STATUS_OK_THRESHOLD),
+            - timedelta(seconds=settings.MOST_RECENT_CHECK_AGE_THRESHOLD),
         )
 
         check_pass, check_info = service_checks.most_recent_check()
@@ -26,7 +26,7 @@ class TestMostRecentCheck(TestCase):
         self.assertEqual(
             {
                 "most_recent_check_age": timedelta(
-                    seconds=settings.SERVICE_STATUS_OK_THRESHOLD
+                    seconds=settings.MOST_RECENT_CHECK_AGE_THRESHOLD
                 )
             },
             check_info,
@@ -37,7 +37,7 @@ class TestMostRecentCheck(TestCase):
         LastCheckLog.objects.create(
             user=self.test_user,
             last_checked=datetime(2020, 8, 15, tzinfo=timezone.utc)
-            - timedelta(seconds=settings.SERVICE_STATUS_OK_THRESHOLD)
+            - timedelta(seconds=settings.MOST_RECENT_CHECK_AGE_THRESHOLD)
             - timedelta(milliseconds=1),
         )
 
@@ -46,7 +46,7 @@ class TestMostRecentCheck(TestCase):
         self.assertEqual(
             {
                 "most_recent_check_age": timedelta(
-                    milliseconds=settings.SERVICE_STATUS_OK_THRESHOLD * 1000 + 1,
+                    milliseconds=settings.MOST_RECENT_CHECK_AGE_THRESHOLD * 1000 + 1,
                 )
             },
             check_info,

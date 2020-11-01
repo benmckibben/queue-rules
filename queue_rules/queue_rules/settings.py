@@ -125,8 +125,8 @@ SOCIAL_AUTH_REDIRECT_IS_HTTPS = config(
     "SOCIAL_AUTH_REDIRECT_IS_HTTPS", default=False, cast=bool
 )
 
-SERVICE_STATUS_OK_THRESHOLD = config(
-    "SERVICE_STATUS_OK_THRESHOLD", default=15, cast=int
+MOST_RECENT_CHECK_AGE_THRESHOLD = config(
+    "MOST_RECENT_CHECK_AGE_THRESHOLD", default=15, cast=int
 )
 
 # Queuerd config
