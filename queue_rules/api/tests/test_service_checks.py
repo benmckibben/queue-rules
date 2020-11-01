@@ -6,7 +6,7 @@ from django.test import SimpleTestCase, TestCase
 from freezegun import freeze_time
 
 from api import service_checks
-from data.models import LastCheckLog
+from data.models import LastCheckLog, UserLock
 
 
 class TestMostRecentCheck(TestCase):
@@ -60,6 +60,91 @@ class TestMostRecentCheck(TestCase):
         self.assertEqual(
             {
                 "most_recent_check_age": None,
+            },
+            check_info,
+        )
+
+
+class TestStaleLocks(TestCase):
+    def setUp(self):
+        self.test_user_1 = User.objects.create(username="test1")
+        self.test_user_2 = User.objects.create(username="test2")
+
+    def test_no_locks(self):
+        self.assertEqual(UserLock.objects.count(), 0)
+
+        check_pass, check_info = service_checks.stale_locks()
+        self.assertTrue(check_pass)
+        self.assertEqual(
+            {
+                "num_stale_locks": 0,
+            },
+            check_info,
+        )
+
+    def test_no_stale_locks(self):
+        with freeze_time(datetime(2020, 11, 1, tzinfo=timezone.utc)):
+            UserLock.objects.create(user=self.test_user_1)
+
+        with freeze_time(
+            datetime(2020, 11, 1, tzinfo=timezone.utc)
+            - timedelta(seconds=settings.STALE_LOCK_THRESHOLD)
+            + timedelta(milliseconds=1)
+        ):
+            UserLock.objects.create(user=self.test_user_2)
+
+        with freeze_time(datetime(2020, 11, 1, tzinfo=timezone.utc)):
+            check_pass, check_info = service_checks.stale_locks()
+
+        self.assertTrue(check_pass)
+        self.assertEqual(
+            {
+                "num_stale_locks": 0,
+            },
+            check_info,
+        )
+
+    def test_one_stale_lock(self):
+        with freeze_time(datetime(2020, 11, 1, tzinfo=timezone.utc)):
+            UserLock.objects.create(user=self.test_user_1)
+
+        with freeze_time(
+            datetime(2020, 11, 1, tzinfo=timezone.utc)
+            - timedelta(seconds=settings.STALE_LOCK_THRESHOLD)
+        ):
+            UserLock.objects.create(user=self.test_user_2)
+
+        with freeze_time(datetime(2020, 11, 1, tzinfo=timezone.utc)):
+            check_pass, check_info = service_checks.stale_locks()
+
+        self.assertFalse(check_pass)
+        self.assertEqual(
+            {
+                "num_stale_locks": 1,
+            },
+            check_info,
+        )
+
+    def test_two_stale_locs(self):
+        with freeze_time(
+            datetime(2020, 11, 1, tzinfo=timezone.utc)
+            - timedelta(seconds=settings.STALE_LOCK_THRESHOLD * 2)
+        ):
+            UserLock.objects.create(user=self.test_user_1)
+
+        with freeze_time(
+            datetime(2020, 11, 1, tzinfo=timezone.utc)
+            - timedelta(seconds=settings.STALE_LOCK_THRESHOLD)
+        ):
+            UserLock.objects.create(user=self.test_user_2)
+
+        with freeze_time(datetime(2020, 11, 1, tzinfo=timezone.utc)):
+            check_pass, check_info = service_checks.stale_locks()
+
+        self.assertFalse(check_pass)
+        self.assertEqual(
+            {
+                "num_stale_locks": 2,
             },
             check_info,
         )

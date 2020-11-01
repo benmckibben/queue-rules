@@ -4,7 +4,7 @@ from typing import Tuple
 
 from django.conf import settings
 
-from data.models import LastCheckLog
+from data.models import LastCheckLog, UserLock
 
 
 # For each of these checks, return a tuple of whether the check passed and a dict with
@@ -26,6 +26,16 @@ def most_recent_check() -> Tuple[bool, dict]:
         return False, {"most_recent_check_age": None}
 
 
+def stale_locks() -> Tuple[bool, dict]:
+    now = datetime.now(timezone.utc)
+    num_stale_locks = UserLock.objects.filter(
+        created__lte=now - timedelta(seconds=settings.STALE_LOCK_THRESHOLD)
+    ).count()
+
+    result = num_stale_locks == 0
+    return result, {"num_stale_locks": num_stale_locks}
+
+
 class ServiceStatus(Enum):
     CRITICAL = 0
     WARNING = 1
@@ -35,7 +45,7 @@ class ServiceStatus(Enum):
 # For each of the above checks, register them as critical checks (indicators that the
 # service is down) or warning checks (indicators that the service has degraded).
 CRITICAL_CHECKS = (most_recent_check,)
-WARNING_CHECKS = ()
+WARNING_CHECKS = (stale_locks,)
 
 
 def run_checks() -> Tuple[ServiceStatus, dict]:
