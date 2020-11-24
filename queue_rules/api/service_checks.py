@@ -58,13 +58,13 @@ def run_checks() -> Tuple[ServiceStatus, dict]:
     service_critical = False
     for check in CRITICAL_CHECKS:
         check_result, check_info = check()
-        service_critical = service_critical | (not check_result)
+        service_critical = service_critical or not check_result
         all_check_info[check.__name__] = check_info
 
     service_warning = False
     for check in WARNING_CHECKS:
         check_result, check_info = check()
-        service_warning = service_warning | (not check_result)
+        service_warning = service_warning or not check_result
         all_check_info[check.__name__] = check_info
 
     service_status = ServiceStatus.OK
