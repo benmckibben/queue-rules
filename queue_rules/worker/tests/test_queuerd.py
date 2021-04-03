@@ -8,6 +8,7 @@ from django.core.management import call_command
 from django.db.utils import IntegrityError
 from django.test import TestCase
 from freezegun import freeze_time
+from requests.exceptions import ReadTimeout
 
 from data.models import LastCheckLog, Rule, UserLock
 from worker.management.commands import queuerd
@@ -291,6 +292,16 @@ class TestRunForUser(TestCase):
             self.test_rule, mock_client.currently_playing.return_value
         )
         self.test_rule.apply.assert_called_once_with(mock_client)
+
+    @mock.patch("worker.management.commands.queuerd.get_matching_rule")
+    def test_read_timeout(self, mock_get_matching):
+        mock_client = mock.MagicMock()
+        mock_client.currently_playing.side_effect = ReadTimeout()
+
+        result = queuerd.run_for_user(self.test_user, mock_client)
+
+        assert result is None
+        mock_get_matching.assert_not_called()
 
 
 class TestRunOne(TestCase):
