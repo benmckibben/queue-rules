@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
+from requests.exceptions import ReadTimeout
 from spotipy import Spotify
 
 from data.models import LastCheckLog, Rule, UserLock
@@ -103,7 +104,14 @@ def should_apply_rule(rule: Rule, playback_info: dict) -> bool:
 
 def run_for_user(user: User, client: Spotify) -> None:
     # Get the user's currently playing track.
-    currently_playing = client.currently_playing()
+    currently_playing = None
+
+    # Catch ReadTimeout specifically because it happens frequently.
+    try:
+        currently_playing = client.currently_playing()
+    except ReadTimeout:
+        pass
+
     if currently_playing is None:
         return
 
